@@ -1,4 +1,5 @@
 import os
+import csv
 from time import sleep
 from logs import logger
 from dotenv import load_dotenv
@@ -26,6 +27,13 @@ class Scraper (Web_scraping):
         # Global data for csv file
         self.headers = []
         
+        # Outpur file
+        self.csv_file = os.path.join (os.path.dirname(__file__), "output.csv")
+        
+        # Clean output file
+        with open (self.csv_file, "w") as file:
+            file.write("")
+        
     def wait_table_load (self):
         """ Wait until the table is loaded """
         
@@ -37,7 +45,14 @@ class Scraper (Web_scraping):
                 break
             else: 
                 sleep (3)
-                self.refresh_selenium()    
+                self.refresh_selenium()  
+                
+    def __save_row_csv__ (self, row):
+        """ Save row in the output csv file """
+        
+        with open (self.csv_file, "a", encoding='UTF-8', newline='') as file:
+            csv_writer = csv.writer(file)
+            csv_writer.writerow(row)
                 
     def extract_row_data (self):
         """ Extract data of the currect visible rows """
@@ -65,17 +80,27 @@ class Scraper (Web_scraping):
             selectors_row ["status"] = f"{selector_current_row} .table-list-columns > .companyStatus"
             selectors_row ["growth_stage"] = f"{selector_current_row} .table-list-columns > .growthStage > span > span"
             
-            # Extract headers and format
+            # Extract headers and save in csv
             if not self.headers:
-                headers = [name for name in selectors_row.keys()]
+                headers = [name.upper().replace("_", " ") for name in selectors_row.keys()]
+                self.__save_row_csv__ (headers)
+                
             
             # Extract data and format
             data_row = []
             for name, selector in selectors_row.items():
-                data_row.append(self.get_text(selector))
+                
+                # Get cell value
+                cell_value = self.get_text(selector)
+                if not cell_value:
+                    cell_value = "-"
+                    
+                # Clean cell and save
+                cell_value = cell_value.replace("\n", ", ")
+                data_row.append(cell_value)
             
-            # Save in csv
-            print ()
+            # Save row in csv
+            self.__save_row_csv__ (data_row)
             
                 
 def main (): 
