@@ -98,19 +98,20 @@ class Scraper (Web_scraping):
         selector_current_row = f"{self.selector_row}:nth-child(row_num)"
         
         selectors_row = OrderedDict()
-        selectors_row ["name"] = f"{selector_current_row} .table-list-columns-fixed.hbox .entity-name__name-text"
-        selectors_row ["dealroom_signal"] = f"{selector_current_row} .table-list-columns > .startupRankingRating .ranking-bar-legend"
-        selectors_row ["market"] = f"{selector_current_row} .table-list-columns > .companyMarket .markets-column"
-        selectors_row ["type"] = f"{selector_current_row} .table-list-columns > .type .business-type-column"
-        selectors_row ["launch_date"] = f"{selector_current_row} .table-list-columns > .launchDate time"
-        selectors_row ["valuation"] = f"{selector_current_row} .table-list-columns > .valuation"
-        selectors_row ["total_funding"] = f"{selector_current_row} .table-list-columns > .totalFunding" 
-        selectors_row ["location"] = f"{selector_current_row} .table-list-columns > .hqLocations"
-        selectors_row ["last_round"] = f"{selector_current_row} .table-list-columns > .lastFundingEnhanced .funding-round-cell-wrapper"
-        selectors_row ["revenue"] = f"{selector_current_row} .table-list-columns > .revenue"
-        selectors_row ["revenue"] = f"{selector_current_row} .table-list-columns > .revenue"
-        selectors_row ["status"] = f"{selector_current_row} .table-list-columns > .companyStatus"
-        selectors_row ["growth_stage"] = f"{selector_current_row} .table-list-columns > .growthStage > span > span"
+        selectors_row ["name"] = (f"{selector_current_row} .table-list-columns-fixed.hbox .entity-name__name-text", "text")
+        selectors_row ["details_link"] = (f"{selector_current_row} .table-list-columns-fixed.hbox a.entity-name__name-text", "link")
+        selectors_row ["dealroom_signal"] = (f"{selector_current_row} .table-list-columns > .startupRankingRating .ranking-bar-legend", "text")
+        selectors_row ["market"] = (f"{selector_current_row} .table-list-columns > .companyMarket .markets-column", "text")
+        selectors_row ["type"] = (f"{selector_current_row} .table-list-columns > .type .business-type-column", "text")
+        selectors_row ["launch_date"] = (f"{selector_current_row} .table-list-columns > .launchDate time", "text")
+        selectors_row ["valuation"] = (f"{selector_current_row} .table-list-columns > .valuation", "text")
+        selectors_row ["total_funding"] = (f"{selector_current_row} .table-list-columns > .totalFunding", "text") 
+        selectors_row ["location"] = (f"{selector_current_row} .table-list-columns > .hqLocations", "text")
+        selectors_row ["last_round"] = (f"{selector_current_row} .table-list-columns > .lastFundingEnhanced .funding-round-cell-wrapper", "text")
+        selectors_row ["revenue"] = (f"{selector_current_row} .table-list-columns > .revenue", "text")
+        selectors_row ["revenue"] = (f"{selector_current_row} .table-list-columns > .revenue", "text")
+        selectors_row ["status"] = (f"{selector_current_row} .table-list-columns > .companyStatus", "text")
+        selectors_row ["growth_stage"] = (f"{selector_current_row} .table-list-columns > .growthStage > span > span", "text")
         
         selectors_details = OrderedDict()
         selectors_details ["empleoyees"] = (".field.employees > .description", "text")
@@ -122,9 +123,8 @@ class Scraper (Web_scraping):
         selectors_details ["tags"] = (".company-tags li", "text")
         selectors_details ["socials"] = (".item-details-info__website > .resource-urls > a", "link-all")
         
-        
         # Wait load current results page using first elem as reference
-        self.__wait_load__(selectors_row ["name"].replace("row_num", str(1)), 0)
+        self.__wait_load__(selectors_row ["name"][0].replace("row_num", str(1)), 0)
         
         # Get number for rows
         rows_num = len(self.get_elems(self.selector_row))
@@ -133,30 +133,23 @@ class Scraper (Web_scraping):
         data_rows = []
         for row_num in range (1, rows_num + 1):
             
+            data_row = []
+            
             # Extract headers and save in csv
             if not self.headers:
                 self.headers = [name.upper().replace("_", " ") for name in selectors_row.keys()]
                 self.headers += [name.upper().replace("_", " ") for name in selectors_details.keys()]
                 self.__save_csv__ (self.headers)
                 
-            # Extract data from rows and format
-            data_row = []
-            for _, selector in selectors_row.items():
-                
-                # Get cell value
-                cell_value = self.get_text(selector.replace("row_num", str(row_num)))
-                if not cell_value:
-                    cell_value = "-"
-                    
-                # Clean cell and save
-                cell_value = cell_value.replace("\n", ", ")
-                data_row.append(cell_value)
+            # Extract data from rows page
+            for _, (selector_value, selector_type) in selectors_row.items():
+                value = self.__get_value__ (selector_value.replace("row_num", str(row_num)), selector_type)
+                data_row.append(value)
                 
             # Open details page
-            details_link = self.get_attrib(selectors_row ["name"].replace("row_num", str(row_num)), "href") 
             self.open_tab()
             self.switch_to_tab(1)
-            self.set_page(details_link)
+            self.set_page(data_row [1])
             
             # Wait to load current details page using an elem as reference
             self.__wait_load__("h1.name", 1)
