@@ -52,11 +52,44 @@ class Scraper (Web_scraping):
         with open (self.csv_file, "a", encoding='UTF-8', newline='') as file:
             csv_writer = csv.writer(file)
             csv_writer.writerow(row)
+            
+    def __get_value__ (self, selector_value, selector_type):
+        """Get value from selector
+
+        Args:
+            selector_value (str): css selector of the value to extract
+            selector_type (str): type of the css selector (text, link or text-all)
+
+        Returns:
+            str: value who match with the selector and type
+        """
+        
+        # Get cell value from selector
+        if selector_type == "text":
+            value = self.get_text(selector_value)
+        elif selector_type == "link":
+            value = self.get_attrib(selector_value, "href")
+        elif selector_type == "text-all":
+            value = ", ".join(self.get_texts (selector_value))
+        elif selector_type == "link-all":
+            value = ", ".join(self.get_attribs(selector_value, "href"))
+        else:
+            value = "-"
+        
+        # Format value
+        if not value:
+            value = "-"
+            
+        # Clen value
+        value = value.replace("\n", " ").replace("\r", " ").replace("\t", " ").replace("  ", " ").strip()
+        
+        return value
                 
-    def extract_data (self):
+    def extract_row (self):
         """ Extract data of the currect visible rows """
         
-         # CSS selectors
+        
+        # CSS selectors
         selector_current_row = f"{self.selector_row}:nth-child(row_num)"
         
         selectors_row = OrderedDict()
@@ -75,7 +108,15 @@ class Scraper (Web_scraping):
         selectors_row ["growth_stage"] = f"{selector_current_row} .table-list-columns > .growthStage > span > span"
         
         selectors_details = OrderedDict()
-        selectors_details ["empleoyees"] = ".field.employees > .description"
+        selectors_details ["empleoyees"] = (".field.employees > .description", "text")
+        selectors_details ["ownership"] = (".field.ownership > .description", "text")
+        selectors_details ["market_cap"] = (".field.market-cap > .description", "text")
+        selectors_details ["debt"] = (".field.net-debt > .description", "text")
+        selectors_details ["website"] = (".item-details-info__website > a", "link")
+        selectors_details ["firm_value"] = (".field.firm-valuation > .description", "text")
+        selectors_details ["tags"] = (".company-tags li", "text")
+        selectors_details ["socials"] = (".item-details-info__website > .resource-urls > a", "link-all")
+        
         
         # Wait load current results page using first elem as reference
         self.__wait_load__(selectors_row ["name"].replace("row_num", str(1)), 0)
@@ -95,7 +136,7 @@ class Scraper (Web_scraping):
             
             # Extract data from rows and format
             data_row = []
-            for name, selector in selectors_row.items():
+            for _, selector in selectors_row.items():
                 
                 # Get cell value
                 cell_value = self.get_text(selector.replace("row_num", str(row_num)))
@@ -113,9 +154,12 @@ class Scraper (Web_scraping):
             self.set_page(details_link)
             
             # Wait to load current details page using an elem as reference
-            self.__wait_load__(selectors_details ["empleoyees"], 1)
+            self.__wait_load__(selectors_details ["empleoyees"][0], 1)
             
             # Extract data from details page
+            for _, (selector_value, selector_type) in selectors_details.items():
+                value = self.__get_value__ (selector_value, selector_type)
+                data_row.append(value)
             
             # Go back to results page
             self.close_tab()
@@ -123,13 +167,13 @@ class Scraper (Web_scraping):
             
             # Save row in csv
             self.__save_row_csv__ (data_row)
-            
+            print ()
                 
 def main (): 
     
     # Scraping workflow
     scraper = Scraper ()
-    scraper.extract_data ()
+    scraper.extract_row ()
     print ("done")
 
 if __name__ == "__main__":
