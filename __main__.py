@@ -19,7 +19,7 @@ class Scraper (Web_scraping):
         logger.info ("Killing chrome...")
         web_page = "https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union"
         super().__init__(web_page, headless=False, chrome_folder=CHROME_PATH, start_killing=True)
-        logger.info ("Starting scraper...")
+        logger.info ("Starting scraper and loading page...")
         
         # CSS global selectors
         self.selector_row = ".virtual-list.table-list > .table-list-item"
@@ -39,11 +39,13 @@ class Scraper (Web_scraping):
         self.last_bussiness = []
         
         # Counter of number of scrolls in page
-        self.scroll_counter = 0
+        self.scroll_counter = 1
         self.scroll_units = 5000
                 
     def __save_csv__ (self, data, multiple_rows=False):
         """ Save row in the output csv file """
+        
+        logger.debug ("Saving data in csv file: {','.join(data)}")
         
         with open (self.csv_file, "a", encoding='UTF-8', newline='') as file:
             csv_writer = csv.writer(file)
@@ -90,7 +92,7 @@ class Scraper (Web_scraping):
         
         
         # CSS selectors
-        logger.info ("Loading table...")
+        logger.info ("Scraping data...")
         selector_current_row = f"{self.selector_row}:nth-child(row_num)"
         
         selectors_row = OrderedDict()
@@ -128,6 +130,7 @@ class Scraper (Web_scraping):
         # Loop over rows
         data_rows = []
         for row_num in range (1, rows_num + 1):
+        # for row_num in range (1, 2): # DEBUG
             
             # incress row number
             rows_num += 1
@@ -149,8 +152,13 @@ class Scraper (Web_scraping):
             # valiudate if current row (with link) is in last_bussiness
             if data_row [1] in self.last_bussiness:
                 
+                logger.debug (f"Row skipped: {data_row [0]} {data_row [1]}")
+                
                 # Skip duplicated row
                 continue
+            
+            # Debug status
+            logger.debug (f"Current row: ({row_num}) {data_row [0]} {data_row [1]}")
             
             # Save current row link in last_bussiness
             self.last_bussiness.append (data_row [1])
@@ -175,18 +183,26 @@ class Scraper (Web_scraping):
             # Save current row
             data_rows.append (data_row)
             
+            # Debug status
+            logger.debug (f"New bussiness: {','.join(data_row)}")
+            
+        # Show status
+        logger.info (f"New bussiness extracted: {len(data_rows)}")
+            
         # Save rows in csv
         self.__save_csv__ (data_rows, multiple_rows=True)
-        print ()
         
     def load_more_results (self):
         """ Load more rows / results in table """
+        
+        logger.info ("Loading more results...")
         
         # Scroll down for load more results
         self.scroll(self.selector_table, 0, self.scroll_counter*self.scroll_units)
         self.scroll_counter += 1
             
         # Refresh page
+        sleep(2)
         self.refresh_selenium()
                 
 def main (): 
