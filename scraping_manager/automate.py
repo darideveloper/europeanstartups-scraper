@@ -641,4 +641,4 @@ class Web_scraping ():
             if elem_text:
                 break
             else: 
-                sleep (0.5)
+                time.sleep (0.5)

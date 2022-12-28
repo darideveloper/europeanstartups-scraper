@@ -15,7 +15,7 @@ class Scraper (Web_scraping):
         CHROME_PATH = os.environ.get("CHROME_PATH")
         HEADLESS = os.environ.get("SHOW_BROWSER") == "False"
         
-        # Start scraper
+        # Start scraper-
         logger.info ("Killing chrome...")
         web_page = "https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union"
         super().__init__(web_page, headless=False, chrome_folder=CHROME_PATH, start_killing=True)
@@ -23,6 +23,7 @@ class Scraper (Web_scraping):
         
         # CSS global selectors
         self.selector_row = ".virtual-list.table-list > .table-list-item"
+        self.selector_table = "#window-scrollbar > div:first-child"
         
         # Global data for csv file
         self.headers = []
@@ -33,6 +34,13 @@ class Scraper (Web_scraping):
         # Clean output file
         with open (self.csv_file, "w") as file:
             file.write("")
+     
+        # List of business already extracted
+        self.last_bussiness = []
+        
+        # Counter of number of scrolls in page
+        self.scroll_counter = 0
+        self.scroll_units = 5000
                 
     def __save_csv__ (self, data, multiple_rows=False):
         """ Save row in the output csv file """
@@ -112,7 +120,7 @@ class Scraper (Web_scraping):
         selectors_details ["socials"] = (".item-details-info__website > .resource-urls > a", "link-all")
         
         # Wait load current results page using first elem as reference
-        self.__wait_load__(selectors_row ["name"][0].replace("row_num", str(1)), 0)
+        self.__wait_load__(selectors_row ["name"][0].replace("row_num", str(1)), 0)            
         
         # Get number for rows
         rows_num = len(self.get_elems(self.selector_row))
@@ -121,6 +129,10 @@ class Scraper (Web_scraping):
         data_rows = []
         for row_num in range (1, rows_num + 1):
             
+            # incress row number
+            rows_num += 1
+
+            # List for store data or the current row 
             data_row = []
             
             # Extract headers and save in csv
@@ -133,6 +145,15 @@ class Scraper (Web_scraping):
             for _, (selector_value, selector_type) in selectors_row.items():
                 value = self.__get_value__ (selector_value.replace("row_num", str(row_num)), selector_type)
                 data_row.append(value)
+                
+            # valiudate if current row (with link) is in last_bussiness
+            if data_row [1] in self.last_bussiness:
+                
+                # Skip duplicated row
+                continue
+            
+            # Save current row link in last_bussiness
+            self.last_bussiness.append (data_row [1])
                 
             # Open details page
             self.open_tab()
@@ -157,12 +178,24 @@ class Scraper (Web_scraping):
         # Save rows in csv
         self.__save_csv__ (data_rows, multiple_rows=True)
         print ()
+        
+    def load_more_results (self):
+        """ Load more rows / results in table """
+        
+        # Scroll down for load more results
+        self.scroll(self.selector_table, 0, self.scroll_counter*self.scroll_units)
+        self.scroll_counter += 1
+            
+        # Refresh page
+        self.refresh_selenium()
                 
 def main (): 
     
     # Scraping workflow
     scraper = Scraper ()
-    scraper.extract_row ()
+    while True:
+        scraper.extract_row ()
+        scraper.load_more_results ()
     print ("done")
 
 if __name__ == "__main__":
