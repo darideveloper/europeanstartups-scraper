@@ -33,18 +33,6 @@ class Scraper (Web_scraping):
         # Clean output file
         with open (self.csv_file, "w") as file:
             file.write("")
-        
-    def __wait_load__ (self, selector, back_tab):
-        """ Wait until the table is loaded """
-        
-        logger.info ("Wating for page load...")
-        while True:
-            elem_text = self.get_text(selector)
-            if elem_text:
-                break
-            else: 
-                sleep (2)
-                self.refresh_selenium(back_tab=back_tab)
                 
     def __save_csv__ (self, data, multiple_rows=False):
         """ Save row in the output csv file """

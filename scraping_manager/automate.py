@@ -632,3 +632,13 @@ class Web_scraping ():
                                     elem, 
                                     scroll_x, 
                                     scroll_y) 
+
+    def __wait_load__ (self, selector, back_tab):
+        """ Wait until the table is loaded """
+        
+        while True:
+            elem_text = self.get_text(selector)
+            if elem_text:
+                break
+            else: 
+                sleep (0.5)
