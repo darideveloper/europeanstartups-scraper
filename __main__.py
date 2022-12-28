@@ -46,12 +46,16 @@ class Scraper (Web_scraping):
                 sleep (2)
                 self.refresh_selenium(back_tab=back_tab)
                 
-    def __save_row_csv__ (self, row):
+    def __save_csv__ (self, data, multiple_rows=False):
         """ Save row in the output csv file """
         
         with open (self.csv_file, "a", encoding='UTF-8', newline='') as file:
             csv_writer = csv.writer(file)
-            csv_writer.writerow(row)
+            
+            if multiple_rows: 
+                csv_writer.writerows(data)
+            else:
+                csv_writer.writerow(data)
             
     def __get_value__ (self, selector_value, selector_type):
         """Get value from selector
@@ -90,6 +94,7 @@ class Scraper (Web_scraping):
         
         
         # CSS selectors
+        logger.info ("Loading table...")
         selector_current_row = f"{self.selector_row}:nth-child(row_num)"
         
         selectors_row = OrderedDict()
@@ -125,15 +130,15 @@ class Scraper (Web_scraping):
         rows_num = len(self.get_elems(self.selector_row))
         
         # Loop over rows
+        data_rows = []
         for row_num in range (1, rows_num + 1):
             
             # Extract headers and save in csv
             if not self.headers:
                 self.headers = [name.upper().replace("_", " ") for name in selectors_row.keys()]
                 self.headers += [name.upper().replace("_", " ") for name in selectors_details.keys()]
-                self.__save_row_csv__ (self.headers)
+                self.__save_csv__ (self.headers)
                 
-            
             # Extract data from rows and format
             data_row = []
             for _, selector in selectors_row.items():
@@ -154,7 +159,7 @@ class Scraper (Web_scraping):
             self.set_page(details_link)
             
             # Wait to load current details page using an elem as reference
-            self.__wait_load__(selectors_details ["empleoyees"][0], 1)
+            self.__wait_load__("h1.name", 1)
             
             # Extract data from details page
             for _, (selector_value, selector_type) in selectors_details.items():
@@ -165,9 +170,12 @@ class Scraper (Web_scraping):
             self.close_tab()
             self.switch_to_tab(0)
             
-            # Save row in csv
-            self.__save_row_csv__ (data_row)
-            print ()
+            # Save current row
+            data_rows.append (data_row)
+            
+        # Save rows in csv
+        self.__save_csv__ (data_rows, multiple_rows=True)
+        print ()
                 
 def main (): 
     
