@@ -15,7 +15,6 @@ class Scraper (Web_scraping):
     def __init__ (self): 
         """ Read credentials from .env and start scraper """
         
-        
         # Start scraper-
         logger.info ("Killing chrome...")
         web_page = "https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union"
@@ -157,8 +156,7 @@ class Scraper (Web_scraping):
                 # Skip duplicated row
                 continue
             
-            # Debug status
-            logger.debug (f"Current row: ({row_num}) {data_row [0]} {data_row [1]}")
+            logger.info (f"\tcurrent bussiness: {data_row[0]}")
             
             # Save current row link in last_bussiness
             self.last_bussiness.append (data_row [1])
