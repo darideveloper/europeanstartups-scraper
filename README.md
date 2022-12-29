@@ -68,7 +68,16 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Web page Screenshot][product-screenshot]](webpage)
+Web page
+![Web page table screenshot](imgs/ss1.png)
+![Web page details screenshot](imgs/ss2.png)
+
+Sample terminal
+![terminal screenshot](imgs/ss3.png)
+
+Sample csv file
+![csv screenshot](imgs/ss4.png)
+
 
 The project extract all results from the page [https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union](https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union), and save the output data in a csv file.
 
@@ -130,9 +139,10 @@ To get a local copy up and running follow these simple example steps.
    ```sh
    python -m pip install -r requirements.txt 
    ```
-3. Update your chrome path in the `.env` file (note: the chrome path is the folder where chrome data its installed)
-   ```js
-   CHROME_PATH = C:\Users\<<your-user-name>>\AppData\Local\Google\Chrome\User Data
+3. Create a `.env` file with the next content
+   ```sh
+   CHROME_PATH = C:\Users\<<your-user-name>>\AppData\Local\Google\Chrome\User Data #the chrome path is the folder where chrome data its installed
+   SHOW_BROWSER = True # Show (True) or Hide (False) the google chrome window
    ```
 
 
