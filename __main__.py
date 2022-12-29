@@ -6,19 +6,20 @@ from dotenv import load_dotenv
 from collections import OrderedDict
 from scraping_manager.automate import Web_scraping
 
+# Read credentials from .env file
+load_dotenv ()
+CHROME_PATH = os.environ.get("CHROME_PATH")
+HEADLESS = os.environ.get("SHOW_BROWSER") == "False"
+
 class Scraper (Web_scraping):
     def __init__ (self): 
         """ Read credentials from .env and start scraper """
         
-        # Read credentials from .env file
-        load_dotenv ()
-        CHROME_PATH = os.environ.get("CHROME_PATH")
-        HEADLESS = os.environ.get("SHOW_BROWSER") == "False"
         
         # Start scraper-
         logger.info ("Killing chrome...")
         web_page = "https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union"
-        super().__init__(web_page, headless=False, chrome_folder=CHROME_PATH, start_killing=True)
+        super().__init__(web_page, headless=HEADLESS, chrome_folder=CHROME_PATH, start_killing=True)
         logger.info ("Starting scraper and loading page...")
         
         # CSS global selectors
@@ -40,7 +41,7 @@ class Scraper (Web_scraping):
         
         # Counter of number of scrolls in page
         self.scroll_counter = 1
-        self.scroll_units = 5000
+        self.scroll_units = 2500
                 
     def __save_csv__ (self, data, multiple_rows=False):
         """ Save row in the output csv file """
@@ -89,8 +90,7 @@ class Scraper (Web_scraping):
                 
     def extract_row (self):
         """ Extract data of the currect visible rows """
-        
-        
+                
         # CSS selectors
         logger.info ("Scraping data...")
         selector_current_row = f"{self.selector_row}:nth-child(row_num)"
@@ -190,15 +190,22 @@ class Scraper (Web_scraping):
         logger.info (f"New bussiness extracted: {len(data_rows)}")
             
         # Save rows in csv
-        self.__save_csv__ (data_rows, multiple_rows=True)
+        if data_rows:
+            self.__save_csv__ (data_rows, multiple_rows=True)
+            
+        return rows_num
         
     def load_more_results (self):
         """ Load more rows / results in table """
         
+        print ()
         logger.info ("Loading more results...")
         
         # Scroll down for load more results
         self.scroll(self.selector_table, 0, self.scroll_counter*self.scroll_units)
+        sleep (2)
+        self.scroll(self.selector_table, 0, self.scroll_counter*self.scroll_units)
+        sleep (2)
         self.scroll_counter += 1
             
         # Refresh page
@@ -210,8 +217,15 @@ def main ():
     # Scraping workflow
     scraper = Scraper ()
     while True:
-        scraper.extract_row ()
+        
+        # Extract data and load more results
+        results_found = scraper.extract_row ()
         scraper.load_more_results ()
+        
+        # End loop where no more results are found
+        if not results_found:
+            break
+        
     print ("done")
 
 if __name__ == "__main__":
