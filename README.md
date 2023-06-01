@@ -52,77 +52,77 @@ Project type: **client's project**
 
 # Details
 
-The project extract all results from the page [https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union](https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union), and save the output data in a csv file.\r
-\r
-The project is a python script, that use a google chrome data with a premium account already logged, to extract the data from the page.\r
-\r
-The data extract is:\r
-\r
-* NAME\r
-* DEALROOM SIGNAL\r
-* MARKET\r
-* TYPE\r
-* LAUNCH DATE\r
-* VALUATION\r
-* FUNDING\r
-* LOCATION\r
-* LAST ROUND\r
-* REVENUE\r
-* STATUS\r
-* GROWTH STAGE\r
-* EMPLOYEES\r
-* OWNERSHIP\r
-* MARKET CAP\r
-* DEBT\r
-* URL WEBSITE\r
-* LINKEDIN PROFILE\r
-* TWITTER PROFILE\r
-* FIRM VALUATION\r
+The project extract all results from the page [https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union](https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union), and save the output data in a csv file.
+
+The project is a python script, that use a google chrome data with a premium account already logged, to extract the data from the page.
+
+The data extract is:
+
+* NAME
+* DEALROOM SIGNAL
+* MARKET
+* TYPE
+* LAUNCH DATE
+* VALUATION
+* FUNDING
+* LOCATION
+* LAST ROUND
+* REVENUE
+* STATUS
+* GROWTH STAGE
+* EMPLOYEES
+* OWNERSHIP
+* MARKET CAP
+* DEBT
+* URL WEBSITE
+* LINKEDIN PROFILE
+* TWITTER PROFILE
+* FIRM VALUATION
 * TAGS
 
 # Install
 
-## Prerequisites\r
-\r
-* [Google chrome](https://www.google.com/intl/es-419/chrome/)\r
-* [Python >=3.10](https://www.python.org/)\r
-* [Git](https://git-scm.com/)\r
-\r
-## Installation\r
-\r
-1. Clone the repo\r
-   \\`\\`\\`sh\r
-   git clone https://github.com/darideveloper/europeanstartups_scraper.git\r
-   \\`\\`\\`\r
-2. Install python packages (opening a terminal in the project folder)\r
-   \\`\\`\\`sh\r
-   python -m pip install -r requirements.txt \r
-   \\`\\`\\`
+## Prerequisites
+
+* [Google chrome](https://www.google.com/intl/es-419/chrome/)
+* [Python >=3.10](https://www.python.org/)
+* [Git](https://git-scm.com/)
+
+## Installation
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/darideveloper/europeanstartups_scraper.git
+   ```
+2. Install python packages (opening a terminal in the project folder)
+   ```sh
+   python -m pip install -r requirements.txt 
+   ```
 
 # Settings
 
-Create a \\`.env\\` file with the following content\r
-\\`\\`\\`sh\r
- CHROME_PATH = C:\\Users\\<<your-user-name>>\\AppData\\Local\\Google\\Chrome\\User Data #the chrome path is the folder where chrome data its installed\r
- SHOW_BROWSER = True # Show (True) or Hide (False) the google chrome window\r
-\\`\\`\\`
+Create a `.env` file with the following content
+```sh
+ CHROME_PATH = C:Users<<your-user-name>>AppDataLocalGoogleChromeUser Data #the chrome path is the folder where chrome data its installed
+ SHOW_BROWSER = True # Show (True) or Hide (False) the google chrome window
+```
 
 # Run
 
-1. Go to https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union and create an account (if you have problems with your email, try with a [proton email](https://proton.me/es/mail))\r
-2. Activate the premium trial or buy a premium account\r
-3. be sure to keep the account logged in the browser.\r
-4. Open a terminal in the project folder\r
-5. Run the project folder with python: \r
-    \\`\\`\\`sh\r
-    python .\r
-    \\`\\`\\`\r
-6. Wait until the script finish, and check the \\`output.csv\\` file in the project folder (note: while the script its running, you can't use google chrome).
+1. Go to https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union and create an account (if you have problems with your email, try with a [proton email](https://proton.me/es/mail))
+2. Activate the premium trial or buy a premium account
+3. be sure to keep the account logged in the browser.
+4. Open a terminal in the project folder
+5. Run the project folder with python: 
+    ```sh
+    python .
+    ```
+6. Wait until the script finish, and check the `output.csv` file in the project folder (note: while the script its running, you can't use google chrome).
 
 # Roadmap
 
-- [x] Use chrome data fro avoid login in the page\r
-- [x] Extract all data from the page\r
+- [x] Use chrome data fro avoid login in the page
+- [x] Extract all data from the page
 - [x] Save output data in csv file
 
 
