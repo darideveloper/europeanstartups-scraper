@@ -1,5 +1,5 @@
-<div><a href='https://github.com/github.com/darideveloper/blob/master/LICENSE' target='_blank'>
-            <img src='https://img.shields.io/github/license/github.com/darideveloper.svg?style=for-the-badge' alt='MIT License' height='30px'/>
+<div><a href='https://github.com/darideveloper/europeanstartups-scraper/blob/master/LICENSE' target='_blank'>
+            <img src='https://img.shields.io/github/license/darideveloper/europeanstartups-scraper.svg?style=for-the-badge' alt='MIT License' height='30px'/>
         </a><a href='https://www.linkedin.com/in/francisco-dari-hernandez-6456b6181/' target='_blank'>
                 <img src='https://img.shields.io/static/v1?style=for-the-badge&message=LinkedIn&color=0A66C2&logo=LinkedIn&logoColor=FFFFFF&label=' alt='Linkedin' height='30px'/>
             </a><a href='https://t.me/darideveloper' target='_blank'>
@@ -18,11 +18,7 @@
 
 Python scraper for extract data from the page [europeanstartups](https://app.europeanstartups.co/companies.startups/f/data_type/anyof_Verified/regions/allof_European%20Union), using python, and a google chrome data with a premium account already logged.
 
-Start date: **2022-12-27**
-
-Last update: **2023-05-10**
-
-Project type: **client's project**
+Project type: **client**
 
 </div><br><details>
             <summary>Table of Contents</summary>
@@ -124,5 +120,4 @@ Create a `.env` file with the following content
 - [x] Use chrome data fro avoid login in the page
 - [x] Extract all data from the page
 - [x] Save output data in csv file
-
 
