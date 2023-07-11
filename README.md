@@ -99,7 +99,7 @@ The data extract is:
 
 Create a `.env` file with the following content
 ```sh
- CHROME_PATH = C:Users<<your-user-name>>AppDataLocalGoogleChromeUser Data #the chrome path is the folder where chrome data its installed
+ CHROME_PATH = C:/Users/<<your-user-name>>/AppData/Local/Google/Chrome/User Data/ #the chrome path is the folder where chrome data its installed
  SHOW_BROWSER = True # Show (True) or Hide (False) the google chrome window
 ```
 
@@ -117,7 +117,7 @@ Create a `.env` file with the following content
 
 # Roadmap
 
-- [x] Use chrome data fro avoid login in the page
+- [x] Use chrome data fror avoid login in the page
 - [x] Extract all data from the page
 - [x] Save output data in csv file
 
