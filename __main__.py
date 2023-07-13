@@ -165,6 +165,7 @@ class Scraper (Web_scraping):
             self.open_tab()
             self.switch_to_tab(1)
             self.set_page(data_row [1])
+            sleep (2)
             
             # Wait to load current details page using an elem as reference
             self.__wait_load__("h1.name", 1)
