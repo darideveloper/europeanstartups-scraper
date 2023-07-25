@@ -157,8 +157,6 @@ class Web_scraping ():
         if self.__experimentals:
             options.add_argument("--disable-blink-features=AutomationControlled")
 
-
-        
         # Set configuration to  and create instance
         chromedriver = ChromeDriverManager(chrome_type=ChromeType.GOOGLE).install()
         self.driver = webdriver.Chrome(chromedriver, 

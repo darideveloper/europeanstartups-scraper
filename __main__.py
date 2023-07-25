@@ -164,11 +164,18 @@ class Scraper (Web_scraping):
             # Open details page
             self.open_tab()
             self.switch_to_tab(1)
+            
             self.set_page(data_row [1])
             sleep (2)
+            self.refresh_selenium (back_tab=1)
             
             # Wait to load current details page using an elem as reference
-            self.__wait_load__("h1.name", 1)
+            h1 = self.get_text ("h1.name")
+            if not h1:
+                sleep (20)
+                
+                self.driver.refresh ()
+                break
             
             # Extract data from details page
             for _, (selector_value, selector_type) in selectors_details.items():
