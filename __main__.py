@@ -199,7 +199,7 @@ class Scraper (Web_scraping):
         if data_rows:
             self.__save_csv__ (data_rows, multiple_rows=True)
             
-        return rows_num
+        return len(data_rows)
         
     def load_more_results (self):
         """ Load more rows / results in table """
