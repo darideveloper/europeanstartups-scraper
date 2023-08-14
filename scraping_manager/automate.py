@@ -596,6 +596,7 @@ class Web_scraping ():
         
         # Close new tab and return to specific tab
         self.close_tab()
+        time.sleep(self.basetime * time_units)
         self.switch_to_tab(back_tab)     
         
         # Wait time

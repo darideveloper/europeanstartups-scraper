@@ -166,7 +166,7 @@ class Scraper (Web_scraping):
             self.switch_to_tab(1)
             
             self.set_page(data_row [1])
-            sleep (2)
+            sleep (10)
             self.refresh_selenium (back_tab=1)
             
             # Wait to load current details page using an elem as reference
@@ -204,9 +204,11 @@ class Scraper (Web_scraping):
     def load_more_results (self):
         """ Load more rows / results in table """
         
+        sleep (2)
+        self.refresh_selenium ()
         print ()
         logger.info ("Loading more results...")
-        
+
         # Scroll down for load more results
         self.scroll(self.selector_table, 0, self.scroll_counter*self.scroll_units)
         sleep (2)
@@ -215,13 +217,14 @@ class Scraper (Web_scraping):
         self.scroll_counter += 1
             
         # Refresh page
-        sleep(2)
+        sleep(15)
         self.refresh_selenium()
                 
 def main (): 
     
     # Scraping workflow
     scraper = Scraper ()
+    tries = 0
     while True:
         
         # Extract data and load more results
@@ -230,7 +233,15 @@ def main ():
         
         # End loop where no more results are found
         if not results_found:
-            break
+            tr1es += 1
+            
+            if tries >= 3: 
+                break
+            
+            continue  
+
+        tries = 0
+
         
     print ("done")
 
